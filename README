@@ -1,0 +1,27 @@
+emacsあたりのメモ
+
+cd ~/.emacs.d/elisp
+curl -O http://www.emacswiki.org/emacs/download/install-elisp.el
+curl -O http://coderepos.org/share/browser/lang/elisp/init-loader/init-loader.el?format=txt
+mv init-loader.el?format=txt init-loader.el
+curl -O http://www.emacswiki.org/emacs/download/auto-install.el
+curl -O http://www.cx4a.org/pub/auto-complete-ruby.el
+curl -O http://repo.hyperstruct.net/mozlab/current/chrome/content/mozrepl/moz.el
+curl -L -O http://download.savannah.gnu.org/releases/color-theme/color-theme-6.6.0.tar.gz
+tar xzvf color-theme-6.6.0.tar.gz 
+rm color-theme-6.6.0.tar.gz 
+
+cd ~/.emacs.d/elisp/from_git
+git clone https://github.com/senny/rvm.el.git
+git clone https://github.com/eschulte/rinari.git
+git clone https://github.com/eschulte/yasnippets-rails.git
+
+ln -s ~/.rvm/src/ruby-1.9.2-p136/misc/*.el elisp/
+ln -s ~/.rvm/gems/ruby-1.9.2-p136@global/gems/rcodetools-0.8.5.0/rcodetools.el elisp/
+
+cd ~/.emacs.d/elisp/from_svn
+svn checkout http://ejacs.googlecode.com/svn/trunk/ ejacs
+svn checkout http://yasnippet.googlecode.com/svn/trunk/ yasnippet
+
+auto-install-batch anything
+auto-install-batch auto-complete developer
