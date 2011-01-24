@@ -15,6 +15,9 @@ cd ~/.emacs.d/elisp/from_git
 git clone https://github.com/senny/rvm.el.git
 git clone https://github.com/eschulte/rinari.git
 git clone https://github.com/eschulte/yasnippets-rails.git
+git clone https://github.com/irfn/zen-and-art.git
+git clone https://github.com/nex3/haml-mode.git
+git clone https://github.com/nex3/sass-mode.git
 
 ln -s ~/.rvm/src/ruby-1.9.2-p136/misc/*.el elisp/
 ln -s ~/.rvm/gems/ruby-1.9.2-p136@global/gems/rcodetools-0.8.5.0/rcodetools.el elisp/

@@ -10,7 +10,7 @@ startup_message off
 logfile "$HOME/.screen/screen-%Y%m%d-%n.log"
 #log on
 deflog on
-shelltitle '$ |bash'
+shelltitle '$ |zsh'
 sorendition "+r wb"
 
 defkanji utf-8
@@ -36,9 +36,9 @@ bind -c cresize = eval 'resize =' 'command -c cresize'
 bind -c cresize n eval 'resize min' 'command -c cresize'
 bind -c cresize x eval 'resize max' 'command -c cresize'
 bind -c cresize v eval 'resize -v +1' 'command -c cresize'
-bind -c cresize h eval 'resize -h -1' 'command -c cresize'
-bind -c cresize v eval 'resize -V +10' 'command -c cresize'
-bind -c cresize h eval 'resize -H -10' 'command -c cresize'
+bind -c cresize h eval 'resize -v -1' 'command -c cresize'
+bind -c cresize V eval 'resize -v +10' 'command -c cresize'
+bind -c cresize H eval 'resize -v -10' 'command -c cresize'
 
 bind w eval 'echo "Window mode: "' 'command -c cwindow'
 bind -c cwindow s eval 'split' 'focus' 'select 0'
@@ -57,11 +57,23 @@ screen termtter 0
 screen emacs 1 
 screen -t zsh
 
-caption always "%{= Rk} %?%F%{b kr}%? %?%h%:%t (screen #%n)%? %{-}"
-hardstatus alwayslastline "%{= Gk} %-Lw%40L>%{b kg} %n %t %{-}%+Lw%-040=%{b km} %l %{.b} %Y/%m/%d %C:%s %A "
+#caption always "%{= Rk} %?%F%{b kr}%? %?%h%:%t (screen #%n)%? %{-}"
+#caption always "%?%F%{= Gk}%:%{= Bk}%? %-w%?%F%{= gk}%:%{= bw}%?%n %t%{-}%+w %=%{= wk} %l %{= wk} %d/%m/%Y %c %{-}"
+#caption always "%?%F%{= wk}%:%{= ww}%?%-w%{=u Wk}%n %t%{-}%+w"
+#hardstatus ignore "%w | %h"
+#hardstatus alwayslastline "%{= Gk} %-Lw%40L>%{b kg} %n %t %{-}%+Lw%-040=%{b km} %l %{.b} %Y/%m/%d %C:%s %A "
+#hardstatus alwayslastline "%{= wk} @%H : %{= wk}%-Lw%{=b bw} %n%f+ %t %{= wk}%+Lw %{= wk}%= %a%C %y/%m/%d "
+#hardstatus alwayslastline "%w"
+#hardstatus alwayslastline "[%02c] %`%-w%{=b bw}%n %t%{-}%+w"
+#hardstatus alwayslastline "%{= gk}[%m/%d %02c:%s] %{gW} %-w%{= wk}%n %t%{-}%+w %=%{gk}$USER@$HOSTNAME[$LANG] (%l) "
 sorendition "= Rk"
+caption always "%-w%10L>%{=b bw}%n %t%{-}%+w%-0="
+#hardstatus alwayslastline "%H%=%Y/%m/%d %02c"
+hardstatus alwayslastline "[%02c] %`%-w%{=b bw}%n %t%{-}%+w"
 
+#hardstatus alwayslastline "%`%-w%{=b bw}%n %t%{-}%+w"
+caption always "%{= wk} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wb}%y/%m/%d %{=b wb}%c"
 
 defbce             on
-term               xterm-256color
+#term               xterm-256color
 termcapinfo xterm* 'Co#256:pa#32767:AB=\E[48;5;%dm:AF=\E[38;5;%dm:'

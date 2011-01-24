@@ -12,22 +12,22 @@ export LANG=ja_JP.UTF-8
 #
 autoload colors
 colors
-case ${UID} in
-0)
-  PROMPT="%B%{${fg[red]}%}%/#%{${reset_color}%}%b "
-  PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
-  SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
-  [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
-  ;;
-*)
-  PROMPT="%{${fg[red]}%}%/%%%{${reset_color}%} "
-  PROMPT2="%{${fg[red]}%}%_%%%{${reset_color}%} "
-  SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%} "
-  [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
-  ;;
-esac
+#case ${UID} in
+# 0)
+#   PROMPT="%B%{${fg[red]}%}%/#%{${reset_color}%}%b "
+#   PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
+#   SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
+#   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
+#     PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
+#   ;;
+# *)
+#   PROMPT="%{${fg[red]}%}%/%%%{${reset_color}%} "
+#   PROMPT2="%{${fg[red]}%}%_%%%{${reset_color}%} "
+#   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%} "
+#   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
+#     PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
+#   ;;
+# esac
 
 # auto change directory
 #
@@ -145,14 +145,65 @@ kterm*|xterm*)
   ;;
 esac
 
-## load user .zshrc configuration file
-#
-[ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
+case "${TERM}" in
+screen*)
+    chpwd () { echo -n "_`dirs`\\" }
+    preexec() {
+   	emulate -L zsh
+   	local -a cmd; cmd=(${(z)2})
+   	case $cmd[1] in
+   	    fg)
+   		if (( $#cmd == 1 )); then
+   		    cmd=(builtin jobs -l %+)
+   		else
+   		    cmd=(builtin jobs -l $cmd[2])
+   		fi
+   		;;
+   	    %*) 
+   		cmd=(builtin jobs -l $cmd[1])
+   		;;
+   	    cd)
+   		if (( $#cmd == 2)); then
+   		    cmd[1]=$cmd[2]
+   		fi
+   		;&
+   		*)
+    echo -n "k$cmd[1]:t\\"
+    return
+    ;;
+    esac
+    
+    local -A jt; jt=(${(kv)jobtexts})
+    
+    $cmd >>(read num rest
+   	cmd=(${(z)${(e):-\$jt$num}})
+   	echo -n "k$cmd[1]:t\\") 2>/dev/null
+    }
+    chpwd
+esac
 
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '(%s)-[%b]'
+zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
+#RPROMPT="%1(v|%F{green}%1v%f|)"
+RPROMPT=$'%{\e[32m%}%~'${vcs_info_msg_0_}$'%{\e[m%}'
+PROMPT=$'%{\e[31m%}%n@%M %{\e[33m%}%* %# %{\e[m%}'
+
+function ssh_screen(){
+ eval server=?${$#}
+ screen -t $server ssh "$@"
+}
+if [ x$TERM = xscreen ]; then
+  alias ssh=ssh_screen
+fi
+
+## Load user .zshrc configuration file
+[ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
 [[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
 
-export JAVA_HOME=/usr/local/java
-export PATH=$PATH:$JAVA_HOME/bin
-export PATH=$PATH:~/bin
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/hisashi/ffmpeg/lib
