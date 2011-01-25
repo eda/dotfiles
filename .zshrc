@@ -114,7 +114,7 @@ alias su="su -l"
 #
 unset LSCOLORS
 case "${TERM}" in
-xterm)
+xterm|screen*)
   export TERM=xterm-color
   ;;
 kterm)
@@ -134,7 +134,7 @@ esac
 # set terminal title including current directory
 #
 case "${TERM}" in
-kterm*|xterm*)
+kterm*|xterm*|screen*)
   precmd() {
     echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
   }
@@ -145,55 +145,78 @@ kterm*|xterm*)
   ;;
 esac
 
+# screenのウィンドウ・タイトルに実行したコマンド名を出す（sudoでもよさげに）
+# http://teq.g.hatena.ne.jp/aereal/20100709/1278662144
 case "${TERM}" in
-screen*)
-    chpwd () { echo -n "_`dirs`\\" }
-    preexec() {
-   	emulate -L zsh
-   	local -a cmd; cmd=(${(z)2})
-   	case $cmd[1] in
-   	    fg)
-   		if (( $#cmd == 1 )); then
-   		    cmd=(builtin jobs -l %+)
-   		else
-   		    cmd=(builtin jobs -l $cmd[2])
-   		fi
-   		;;
-   	    %*) 
-   		cmd=(builtin jobs -l $cmd[1])
-   		;;
-   	    cd)
-   		if (( $#cmd == 2)); then
-   		    cmd[1]=$cmd[2]
-   		fi
-   		;&
-   		*)
-    echo -n "k$cmd[1]:t\\"
-    return
-    ;;
-    esac
-    
-    local -A jt; jt=(${(kv)jobtexts})
-    
-    $cmd >>(read num rest
-   	cmd=(${(z)${(e):-\$jt$num}})
-   	echo -n "k$cmd[1]:t\\") 2>/dev/null
-    }
-    chpwd
+    screen*)
+	emulate -L zsh
+	local -a cmd
+	cmd=(${(z)2})
+	case $cmd[2] in
+	    fg)
+		if (( $#cmd == 1)); then
+		    cmd=(builtin jobs -l %+)
+		else
+		    cmd=(builtin jobs -l $cmd[2])
+		fi
+		;;
+	    %*)
+		cmd=(builtin jobs -l $cmd[1])
+		;;
+	    cd)
+		if (( $#cmd == 2 )); then
+		    cmd[1]=$cmd[2]
+		fi
+		;;
+	    ls|clear)
+		echo -n "k$ZSH_NAME\\"
+		return
+		;;
+	    sudo) # http://teq.g.hatena.ne.jp/aereal/20100709/1278662144
+		echo -n "k$cmd[1] $cmd[2]:t\\"
+		return
+		;;
+	    screen|pwd)
+		return
+		;;
+	    *)
+		echo -n "k$cmd[1]:t\\"
+		return
+		;;
+	esac
+	local -A jt
+	jt=(${(kv)jobtexts})
+	$cmd >>(read num rest
+            cmd=(${(z)${(e):-\$jt$num}})
+            echo -n "k$cmd[1]:t\\") 2>/dev/null
 esac
 
+# zsh で Git の作業コピーに変更があるかどうかをプロンプトに表示する方法
+# http://d.hatena.ne.jp/mollifier/20100906/p1
 autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git svn
 zstyle ':vcs_info:*' formats '(%s)-[%b]'
 zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+zstyle ':vcs_info:(svn|bzr):*' branchformat '%b:r%r'
+autoload -Uz is-at-least
+if is-at-least 4.3.10; then
+  # この check-for-changes が今回の設定するところ
+  zstyle ':vcs_info:git:*' check-for-changes true
+  zstyle ':vcs_info:git:*' stagedstr "+"    # 適当な文字列に変更する
+  zstyle ':vcs_info:git:*' unstagedstr "-"  # 適当の文字列に変更する
+  zstyle ':vcs_info:git:*' formats '(%s)-[%b] %c%u'
+  zstyle ':vcs_info:git:*' actionformats '(%s)-[%b|%a] %c%u'
+fi
 precmd () {
     psvar=()
     LANG=en_US.UTF-8 vcs_info
     [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+    RPROMPT=$'%{\e[32m%}%~'${vcs_info_msg_0_}$'%{\e[m%}'
 }
-#RPROMPT="%1(v|%F{green}%1v%f|)"
-RPROMPT=$'%{\e[32m%}%~'${vcs_info_msg_0_}$'%{\e[m%}'
 PROMPT=$'%{\e[31m%}%n@%M %{\e[33m%}%* %# %{\e[m%}'
 
+# ssh したときに新しいウィンドウを開いてそこで ssh して、ウィンドウ名をログイン先のホスト名に自動的に名付けてくれます。
+# http://d.hatena.ne.jp/naoya/20051223/1135351050
 function ssh_screen(){
  eval server=?${$#}
  screen -t $server ssh "$@"
@@ -201,6 +224,10 @@ function ssh_screen(){
 if [ x$TERM = xscreen ]; then
   alias ssh=ssh_screen
 fi
+
+# Screen Ctrl-Sでロックされるのを防ぐ
+stty -ixon
+stty stop undef
 
 ## Load user .zshrc configuration file
 [ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
