@@ -26,11 +26,11 @@
             (lambda ()
               (add-to-list 'ac-sources 'ac-source-filename)
               (add-to-list 'ac-sources 'ac-source-words-in-buffer)))
-
+  
   (add-hook 'c-mode-hook
             (lambda ()
               (setq ac-sources '(ac-source-gtags ac-source-yasnippet))))
-
+  
   (setq ac-modes
         (append ac-modes
                 '(eshell-mode

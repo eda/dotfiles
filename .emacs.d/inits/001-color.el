@@ -3,5 +3,5 @@
 (eval-after-load "color-theme"
   '(progn
      (color-theme-initialize)
-     (color-theme-black)    ::**f
+     (color-theme-zen-and-art)    ::**f
      ))

@@ -9,7 +9,8 @@
      (:background "#222244"))
     (((class color)
       (background light))    ;; 背景色が明るい色のとき
-     (:background "LightSteelBlue1"))
+;     (:background "LightSteelBlue1"))
+     (:background "#222244"))
     (t
      ()))
   "*Face used by hl-line.")

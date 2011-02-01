@@ -9,6 +9,10 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/from_svn/yasnippet/")
 (add-to-list 'load-path "~/.emacs.d/elisp/from_svn/ejacs/")
 (add-to-list 'load-path "~/.emacs.d/auto-install")
+(add-to-list 'load-path "~/.emacs.d/elisp/ensime/elisp/")
+
+;(add-to-list 'load-path (cons (concat (getenv "SCALA_HOME") "/misc/scala-tool-support/emacs/") load-path))
+(setq load-path (cons (concat (getenv "SCALA_HOME") "/misc/scala-tool-support/emacs/") load-path))
 
 ;; install-elisp
 ;; http://www.emacswiki.org/emacs/download/install-elisp.el
