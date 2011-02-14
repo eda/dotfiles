@@ -1,7 +1,7 @@
 ;;
 ;; anything
 ;;
-;; (require 'anything-startup)
+(require 'anything-startup)
 (global-set-key (kbd "M-y") 'anything-show-kill-ring)
 ;;(require 'anything-c-moccur)
 ;;(setq moccur-split-word t)

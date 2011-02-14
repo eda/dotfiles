@@ -6,9 +6,9 @@
 (add-hook 'scala-mode-hook
 	  (lambda ()
 	    (scala-electric-mode)))
-
-(require 'ensime)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(setq scala-interpreter "/usr/local/scala/bin/scala")
+;(require 'ensime)
+;(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 ;(define-key scala-mode-map (kbd "C-cC-b") 'scala-eval-buffer)
 
