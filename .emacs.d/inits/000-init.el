@@ -9,8 +9,8 @@
      (:background "#222244"))
     (((class color)
       (background light))    ;; 背景色が明るい色のとき
-;     (:background "LightSteelBlue1"))
-     (:background "#222244"))
+     (:background "LightSteelBlue1"))
+;     (:background "#222244"))
     (t
      ()))
   "*Face used by hl-line.")
@@ -20,35 +20,66 @@
 ;;;(setq hl-line-face 'underline)
 ;;; 履歴を次回Emacs起動時にも保存する
 (savehist-mode 1)
-;;; mac用フォント設定
-(set-face-attribute 'default nil
-                    :family "monaco"
-                    :height 140)
-(set-fontset-font
- (frame-parameter nil 'font)
- 'japanese-jisx0208
- '("Hiragino Maru Gothic Pro" . "iso10646-1"))
-(set-fontset-font
- (frame-parameter nil 'font)
- 'japanese-jisx0212
- '("Hiragino Maru Gothic Pro" . "iso10646-1"))
-(set-fontset-font
-  (frame-parameter nil 'font)
-  'mule-unicode-0100-24ff
- '("monaco" . "iso10646-1"))
- ;; 半角カナのために↓を追加
- (set-fontset-font
-  (frame-parameter nil 'font)
-  'katakana-jisx0201
-  '("Hiragino Maru Gothic Pro" . "iso10646-1"))
- (setq face-font-rescale-alist
-      '(("^-apple-hiragino.*" . 1.0)
-        (".*osaka-bold.*" . 1.0)
-        (".*osaka-medium.*" . 1.0)
-        (".*courier-bold-.*-mac-roman" . 0.8)
-        (".*monaco cy-bold-.*-mac-cyrillic" . 0.8)
-        (".*monaco-bold-.*-mac-roman" . 0.8)
-        ("-cdac$" . 0.9)))
+
+(defun x->bool (elt) (not (not elt)))
+
+;; emacs-version predicates
+(setq emacs22-p (string-match "^22" emacs-version)
+        emacs23-p (string-match "^23" emacs-version)
+	  emacs23.0-p (string-match "^23\.0" emacs-version)
+	    emacs23.1-p (string-match "^23\.1" emacs-version)
+	      emacs23.2-p (string-match "^23\.2" emacs-version))
+
+;; system-type predicates
+(setq darwin-p  (eq system-type 'darwin)
+      ns-p      (eq window-system 'ns)
+      carbon-p  (eq window-system 'mac)
+      linux-p   (eq system-type 'gnu/linux)
+      colinux-p (when linux-p
+                  (let ((file "/proc/modules"))
+                    (and
+                     (file-readable-p file)
+                     (x->bool
+                      (with-temp-buffer
+                        (insert-file-contents file)
+                        (goto-char (point-min))
+                        (re-search-forward "^cofuse\.+" nil t))))))
+      cygwin-p  (eq system-type 'cygwin)
+      nt-p      (eq system-type 'windows-nt)
+      meadow-p  (featurep 'meadow)
+      windows-p (or cygwin-p nt-p meadow-p))
+
+(when darwin-p
+  ;;; mac用フォント設定
+  (set-face-attribute 'default nil
+                      :family "monaco"
+                      :height 140)
+  (set-fontset-font
+   (frame-parameter nil 'font)
+   'japanese-jisx0208
+   '("Hiragino Maru Gothic Pro" . "iso10646-1"))
+  (set-fontset-font
+   (frame-parameter nil 'font)
+   'japanese-jisx0212
+   '("Hiragino Maru Gothic Pro" . "iso10646-1"))
+  (set-fontset-font
+    (frame-parameter nil 'font)
+    'mule-unicode-0100-24ff
+   '("monaco" . "iso10646-1"))
+   ;; 半角カナのために↓を追加
+   (set-fontset-font
+    (frame-parameter nil 'font)
+    'katakana-jisx0201
+    '("Hiragino Maru Gothic Pro" . "iso10646-1"))
+   (setq face-font-rescale-alist
+        '(("^-apple-hiragino.*" . 1.0)
+          (".*osaka-bold.*" . 1.0)
+          (".*osaka-medium.*" . 1.0)
+          (".*courier-bold-.*-mac-roman" . 0.8)
+          (".*monaco cy-bold-.*-mac-cyrillic" . 0.8)
+          (".*monaco-bold-.*-mac-roman" . 0.8)
+          ("-cdac$" . 0.9)))
+)
 ;; スタートアップ時のメッセージを抑制
 (setq inhibit-startup-message t)
 ;; エンコーディングは基本的にUTF-8

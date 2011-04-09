@@ -14,6 +14,9 @@ rm color-theme-6.6.0.tar.gz
 cd ~/.emacs.d/elisp/from_git
 git clone https://github.com/senny/rvm.el.git
 git clone https://github.com/eschulte/rinari.git
+cd rinari
+git submodule init
+git submodule update
 git clone https://github.com/eschulte/yasnippets-rails.git
 git clone https://github.com/irfn/zen-and-art.git
 git clone https://github.com/nex3/haml-mode.git
