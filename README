@@ -10,6 +10,9 @@ curl -O http://repo.hyperstruct.net/mozlab/current/chrome/content/mozrepl/moz.el
 curl -L -O http://download.savannah.gnu.org/releases/color-theme/color-theme-6.6.0.tar.gz
 tar xzvf color-theme-6.6.0.tar.gz 
 rm color-theme-6.6.0.tar.gz 
+curl -L -O https://github.com/downloads/aemoncannon/ensime/ensime_2.8.1-0.4.1.tar.gz
+tar xzvf ensime_2.8.1-0.4.1.tar.gz
+ln -s ensime_2.8.1-0.4.1/ ensime
 
 cd ~/.emacs.d/elisp/from_git
 git clone https://github.com/senny/rvm.el.git
@@ -21,7 +24,6 @@ git clone https://github.com/eschulte/yasnippets-rails.git
 git clone https://github.com/irfn/zen-and-art.git
 git clone https://github.com/nex3/haml-mode.git
 git clone https://github.com/nex3/sass-mode.git
-git clone https://github.com/aemoncannon/ensime.git
 
 ln -s ~/.rvm/src/ruby-1.9.2-p136/misc/*.el elisp/
 ln -s ~/.rvm/gems/ruby-1.9.2-p136@global/gems/rcodetools-0.8.5.0/rcodetools.el elisp/

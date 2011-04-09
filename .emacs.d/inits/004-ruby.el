@@ -76,6 +76,8 @@ and source-file directory for your debugger.")
 ;  (ruby-block-mode t))
 ;(add-hook 'ruby-mode-hook 'ruby-mode-hook-ruby-block)
 
+(require 'rinari)
+
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/elisp/from_git/yasnippets-rails/rails-snippets/")
